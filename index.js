@@ -10,14 +10,18 @@ module.exports = (pluginContext) => {
     const FAKE = "FAKE_ID";
 
     var gitlab = require('node-gitlab');
+
     var client;
+    var tokenSuffix;
 
 
     function startup() {
         client = gitlab.create({
-            api: preferences.gitlabInstallation + '/api/v3',
+            api: `${preferences.gitlabInstallation}/api/v3`,
             privateToken: preferences.privateToken
         });
+
+        tokenSuffix = `?private_token=${preferences.privateToken}`;
     }
 
     function debounce(pFunction) {
@@ -37,11 +41,12 @@ module.exports = (pluginContext) => {
         pRes.add({
             id: FAKE,
             title: 'fetching...',
-            desc: 'from ' + preferences.gitlabInstallation,
+            desc: `Projects from ${preferences.gitlabInstallation}`,
             icon: '#fa fa-spinner fa-spin'
         });
         client.projects.search({
-            query: pSearchString
+            query: pSearchString,
+            order_by: 'last_activity_at'
         }, function(err, projects) {
             pRes.remove(FAKE);
             if (projects) {
@@ -52,7 +57,7 @@ module.exports = (pluginContext) => {
                         title: project.name_with_namespace,
                         desc: project.description,
                         payload: project.web_url,
-                        icon: project.avatar_url ? project.avatar_url + '?private_token=' + preferences.privateToken : "#fa fa-product-hunt"
+                        icon: project.avatar_url ? `${project.avatar_url}${tokenSuffix}` : '#fa fa-question'
                     };
                     pRes.add(projectResponse);
                 }
@@ -60,24 +65,34 @@ module.exports = (pluginContext) => {
                 pRes.add({
                     id: FAKE,
                     payload: undefined,
-                    title: "No project found matching your criteria: '" + pSearchString + "'",
-                    desc: "Try again with another search."
+                    title: `No project found matching your criteria: ${pSearchString}. Be aware that search is case sensitive.`,
+                    desc: 'Try again with another search.'
                 });
             }
         });
     }
 
     function search(pSearchString, res) {
-        const searchString = pSearchString.trim();
-        if (searchString.length == 0) {
+        if (!preferences.gitlabInstallation || !preferences.privateToken) {
             res.add({
                 id: FAKE,
-                title: 'Type in your query...',
-                desc: '... for Gitlab',
-                icon: '#fa fa-pencil'
+                title: 'Incomplete configuration...',
+                desc: 'Hit tab to redirect to /preferences for plugin configuration options. See hain-plugin-gitlab for details',
+                icon: '#fa fa-cogs',
+                redirect: '/preferences'
             });
         } else {
-            debounce(queryProjects(searchString, res));
+            const searchString = pSearchString.trim();
+            if (searchString.length == 0) {
+                res.add({
+                    id: FAKE,
+                    title: 'Type in your query...',
+                    desc: `...to search ${preferences.gitlabInstallation} for projects.`,
+                    icon: '#fa fa-pencil'
+                });
+            } else {
+                debounce(queryProjects(searchString, res));
+            }
         }
     }
 
