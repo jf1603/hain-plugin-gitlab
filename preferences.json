@@ -3,13 +3,11 @@
     "properties": {
         "gitlabInstallation": {
             "type": "string",
-            "title": "Gitlab url",
-            "default": "URL of the gitlab installation you want to use"
+            "title": "Gitlab url (i.e. https://gitlab.com)"
         },
         "privateToken": {
             "type": "string",
-            "title": "Gitlab private token",
-            "default": "Get it from /profile/account in your installation"
+            "title": "Gitlab private token (get it from Profile Settings -> Account)"
         }
     }
 }

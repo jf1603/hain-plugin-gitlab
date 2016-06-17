@@ -11,8 +11,8 @@
     ],
     "hain": {
         "prefix": "/gitlab",
-        "usage": "type /gitlab something to open project in gitlab",
-        "icon": "#fa fa-gitlab",
+        "usage": "type /gitlab _searchString_ to open project in gitlab",
+        "icon": "/favicon.ico",
         "redirect": "/gitlab "
     },
     "dependencies": {
