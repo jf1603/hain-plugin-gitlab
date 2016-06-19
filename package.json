@@ -1,6 +1,6 @@
 {
     "name": "hain-plugin-gitlab",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Hain plugin to query a GitLab Instance for projects you own or you are member of. Will open the project within a browser on execute.",
     "main": "index.js",
     "author": "Jan Froehlich <jf.1603@gmail.com>",
