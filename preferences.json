@@ -8,6 +8,16 @@
         "privateToken": {
             "type": "string",
             "title": "Gitlab private token (get it from Profile Settings -> Account)"
+        },
+        "orderBy": {
+            "type": "string",
+            "enum": [
+                "id",
+                "name",
+                "last_activity_at"
+            ],
+            "title": "Order results by",
+            "default": "last_activity_at"
         }
     }
 }
